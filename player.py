@@ -4,6 +4,8 @@ from shot import *
 import pygame
 
 class Player(CircleShape):
+    shot_cooldown_timer = 0
+
     def __init__(self, x, y):
         CircleShape.__init__(self, x, y, PLAYER_RADIUS)
         self.rotation = 0
@@ -24,8 +26,12 @@ class Player(CircleShape):
         self.rotation += (PLAYER_TURN_SPEED * dt)
 
     def update(self, dt):
-        keys = pygame.key.get_pressed()
+        if self.shot_cooldown_timer > 0:
+            self.shot_cooldown_timer -= dt
+        elif self.shot_cooldown_timer < 0:
+            self.shot_cooldown_timer = 0
 
+        keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
             self.rotate(-1 * dt)
         if keys[pygame.K_d]:
@@ -34,7 +40,8 @@ class Player(CircleShape):
             self.move(dt)
         if keys[pygame.K_s]:
             self.move(-1 * dt)
-        if keys[pygame.K_SPACE]:
+        if keys[pygame.K_SPACE] and self.shot_cooldown_timer <= 0:
+            self.shot_cooldown_timer = PLAYER_SHOOT_COOLDOWN
             self.shoot()
 
     def move(self, dt):
