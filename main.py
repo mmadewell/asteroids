@@ -37,6 +37,13 @@ def main():
         for thing in updatable:
             thing.update(dt)
 
+        for thing in shots:
+            for roid in asteroids:
+                if thing.is_colliding(roid):
+                    print("Asteroid hit!")
+                    roid.kill()
+                    thing.kill()
+
         for thing in asteroids:
             if thing.is_colliding(player):
                 print('Game Over!')
